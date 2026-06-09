@@ -1,0 +1,298 @@
+/* ===== Custom Properties ===== */
+:root {
+  --sun-size: 60px;
+  --sun-color: #fdb813;
+  --sun-glow: #ff8c00;
+
+  /* Orbit radii — visually spaced, not to scale */
+  --orbit-mercury: 80px;
+  --orbit-venus: 115px;
+  --orbit-earth: 155px;
+  --orbit-mars: 195px;
+  --orbit-jupiter: 255px;
+  --orbit-saturn: 320px;
+  --orbit-uranus: 380px;
+  --orbit-neptune: 435px;
+
+  /* Base animation durations (seconds) — inner planets faster */
+  --dur-mercury: 4s;
+  --dur-venus: 7s;
+  --dur-earth: 10s;
+  --dur-mars: 15s;
+  --dur-jupiter: 25s;
+  --dur-saturn: 35s;
+  --dur-uranus: 50s;
+  --dur-neptune: 70s;
+
+  --bg-space: #050510;
+  --orbit-line-color: rgba(255, 255, 255, 0.08);
+  --label-color: rgba(255, 255, 255, 0.85);
+}
+
+/* ===== Reset & Base ===== */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg-space);
+  color: var(--label-color);
+}
+
+/* ===== Star Background ===== */
+#stars {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ===== Solar System Container ===== */
+#solar-system {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+/* ===== Sun ===== */
+.sun {
+  position: absolute;
+  width: var(--sun-size);
+  height: var(--sun-size);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, var(--sun-color), var(--sun-glow));
+  border-radius: 50%;
+  /* Multi-layer glow effect */
+  box-shadow:
+    0 0 20px var(--sun-glow),
+    0 0 60px rgba(253, 184, 19, 0.4),
+    0 0 120px rgba(255, 140, 0, 0.2);
+  z-index: 10;
+}
+
+.sun .label {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 0.7rem;
+  color: var(--sun-color);
+}
+
+/* ===== Orbits ===== */
+.orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* transform set per-planet via JS for orbit radius */
+}
+
+/* Thin circular orbit line */
+.orbit-line {
+  position: absolute;
+  border: 1px solid var(--orbit-line-color);
+  border-radius: 50%;
+  /* Centered on orbit center */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* The rotating arm — carries the planet around the sun */
+.arm {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: 0 0;
+  animation: orbit-rotate linear infinite;
+}
+
+/* ===== Planet Base ===== */
+.planet {
+  position: absolute;
+  border-radius: 50%;
+  /* Counter-rotate so planet doesn't spin with orbit */
+  animation: orbit-counter-rotate linear infinite;
+}
+
+/* ===== Labels ===== */
+.label {
+  position: absolute;
+  white-space: nowrap;
+  font-size: 0.65rem;
+  letter-spacing: 0.03em;
+  color: var(--label-color);
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+  /* Counter-rotate to stay readable */
+  animation: orbit-counter-rotate linear infinite;
+}
+
+/* ===== Individual Planets ===== */
+
+/* Mercury */
+.orbit[data-planet="mercury"] .planet {
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle at 35% 35%, #c2b280, #8a7b6b);
+}
+
+/* Venus */
+.orbit[data-planet="venus"] .planet {
+  width: 13px;
+  height: 13px;
+  background: radial-gradient(circle at 35% 35%, #e8cda0, #c4915e);
+}
+
+/* Earth */
+.orbit[data-planet="earth"] .planet {
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(circle at 35% 35%, #6b93d6, #2d6a1e);
+}
+
+/* Mars */
+.orbit[data-planet="mars"] .planet {
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle at 35% 35%, #e07050, #993322);
+}
+
+/* Jupiter */
+.orbit[data-planet="jupiter"] .planet {
+  width: 30px;
+  height: 30px;
+  background: radial-gradient(circle at 40% 35%, #f0d8a8, #c8a060 50%, #a07840);
+}
+
+/* Saturn */
+.orbit[data-planet="saturn"] .planet {
+  width: 26px;
+  height: 26px;
+  background: radial-gradient(circle at 35% 35%, #f4d9a0, #c8a850 60%, #a08030);
+}
+
+/* Saturn's ring */
+.saturn-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 12px;
+  transform: translate(-50%, -50%) rotateX(70deg);
+  border: 3px solid rgba(210, 180, 120, 0.5);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Uranus */
+.orbit[data-planet="uranus"] .planet {
+  width: 18px;
+  height: 18px;
+  background: radial-gradient(circle at 35% 35%, #b0e0e6, #5fafc0);
+}
+
+/* Neptune */
+.orbit[data-planet="neptune"] .planet {
+  width: 17px;
+  height: 17px;
+  background: radial-gradient(circle at 35% 35%, #6080e0, #3050b0);
+}
+
+/* ===== Earth's Moon ===== */
+.moon-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 28px;
+  height: 28px;
+  transform: translate(-50%, -50%);
+  animation: moon-orbit 2s linear infinite;
+}
+
+.moon {
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: #ccc;
+  border-radius: 50%;
+}
+
+/* ===== Keyframe Animations ===== */
+@keyframes orbit-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Counter-rotation keeps planets and labels upright */
+@keyframes orbit-counter-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+
+@keyframes moon-orbit {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* ===== Controls Panel ===== */
+#controls {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 40px;
+  padding: 10px 24px;
+  font-size: 0.8rem;
+}
+
+#pause-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 6px 18px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background 0.2s;
+}
+
+#pause-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+#speed-slider {
+  width: 120px;
+  accent-color: var(--sun-color);
+  cursor: pointer;
+}
+
+#speed-value {
+  min-width: 30px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
